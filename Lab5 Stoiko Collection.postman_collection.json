@@ -1,0 +1,1072 @@
+{
+	"info": {
+		"_postman_id": "6d67c54a-20bc-447a-98a2-ee00f6114453",
+		"name": "Lab5 Stoiko Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "43782255",
+		"_collection_link": "https://alexst-5752303.postman.co/workspace/066ceb30-9057-468f-8217-92614ad9da80/collection/43782255-6d67c54a-20bc-447a-98a2-ee00f6114453?action=share&source=collection_link&creator=43782255"
+	},
+	"item": [
+		{
+			"name": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Список событий\", function () {\r",
+							"    let response = pm.response.json();\r",
+							"    let events = response.items;\r",
+							"\r",
+							"    if (!events || events.length === 0) {\r",
+							"        console.log(\"Нет событий в календаре.\");\r",
+							"    } else {\r",
+							"        let list = events.map((event, index) => {\r",
+							"            let summary = event.summary || \"(Без названия)\";\r",
+							"            let start = event.start?.dateTime || event.start?.date || \"(Нет времени)\";\r",
+							"            return `${index + 1}. ${summary} — ${start}`;\r",
+							"        }).join(\"\\n\");\r",
+							"\r",
+							"        console.log(\"Список событий:\\n\" + list);\r",
+							"\r",
+							"        const firstEventId = events[0].id;\r",
+							"        pm.environment.set(\"calendar_event_id\", firstEventId);\r",
+							"    }\r",
+							"\r",
+							"    pm.expect(events.length, \"Событий не найдено\").to.be.above(0);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ya29.a0AZYkNZjU3ub7iSOOyCBywbO8AfBIh1bYPj8ybC1jr9L31QFushfshISXga0Ij8dz8JfBelLgtouFGVxTpif6_3sOPyQdSkoinNL6x1wlq06p8qoDDC9tGc5tOGELyQSIDTzCXoT-ZRhIp2BBwwPGyVv9hzTW7sGvqzuBMEX7aCgYKASgSARMSFQHGX2MiDHwzydBCVgg6x5FQqAqzIg0175",
+							"type": "string"
+						},
+						{
+							"key": "expires_in",
+							"value": 3599,
+							"type": "number"
+						},
+						{
+							"key": "refresh_token",
+							"value": "1//05VTYtSAjESXRCgYIARAAGAUSNwF-L9IrL2tVtBqah7Q4IIoXIO-zO66A8f3zztWA14EoAETFPvt7F_m4pYb0QIGQl1pa5Jlx0DE",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "createdAt",
+							"value": "2025-04-10T15:32:45.880Z",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://accounts.google.com/o/oauth2/v2/auth",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "107950560023-euco7i943qfppcgsvetdii4kppavp4hn.apps.googleusercontent.com",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.addons.current.action.compose https://www.googleapis.com/auth/gmail.addons.current.message.action https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.events.owned",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://oauth2.googleapis.com/token",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "Google Calendar API",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"calendar",
+						"v3",
+						"calendars",
+						"{{calendar_id}}",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events/{{calendar_event_id}}",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Проверка получения детальной информации о событии\", function () {\r",
+							"    const response = pm.response.json();\r",
+							"\r",
+							"    // Проверка наличия нужных полей\r",
+							"    pm.expect(response).to.have.property(\"id\", pm.environment.get(\"calendar_event_id\"));\r",
+							"    pm.expect(response).to.have.property(\"summary\");\r",
+							"    pm.expect(response).to.have.property(\"start\");\r",
+							"    pm.expect(response).to.have.property(\"end\");\r",
+							"\r",
+							"    // Логирование информации о событии\r",
+							"    console.log(\"Детальная информация о событии:\");\r",
+							"    console.log(\"ID события:\", response.id);\r",
+							"    console.log(\"Название события:\", response.summary);\r",
+							"    console.log(\"Время начала:\", response.start.dateTime);\r",
+							"    console.log(\"Время окончания:\", response.end.dateTime);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ya29.a0AZYkNZgBmimRQHpF_RCzsgnZmzvOy-axCjovcbVXntyXsNAS50WWqFKT74idKrTZW4PYqnskqZybZL65S2F_ITnaxgKZchniYKAR0kspuLInJZRXHRv7eZfSNrKroFTJXAkVWVfkhvTy99Mg9yzwgxGfD_idCm_YiDBzFxMyaCgYKAQ8SARMSFQHGX2Mi9hCQ7DYBu0del_xFpFNdRw0175",
+							"type": "string"
+						},
+						{
+							"key": "expires_in",
+							"value": 3599,
+							"type": "number"
+						},
+						{
+							"key": "refresh_token",
+							"value": "1//05Z2cnZK3RYf_CgYIARAAGAUSNwF-L9Irli_eY-hnXZxTdHpkfwzV8cNGt3SSf-DpOwhMK-1RidxA43HKUULy08aDdb_80LxIaRo",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "createdAt",
+							"value": "2025-04-10T15:33:03.766Z",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://accounts.google.com/o/oauth2/v2/auth",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "107950560023-euco7i943qfppcgsvetdii4kppavp4hn.apps.googleusercontent.com",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.addons.current.action.compose https://www.googleapis.com/auth/gmail.addons.current.message.action https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.events.owned",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://oauth2.googleapis.com/token",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "Google Calendar API",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events/{{calendar_event_id}}",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"calendar",
+						"v3",
+						"calendars",
+						"{{calendar_id}}",
+						"events",
+						"{{calendar_event_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Событие успешно создано\", function () {\r",
+							"    const code = pm.response.code;\r",
+							"    pm.expect(code, \"Код ответа должен быть 200 или 201\").to.be.oneOf([200, 201]);\r",
+							"\r",
+							"    const response = pm.response.json();\r",
+							"    const eventId = response.id;\r",
+							"    const summary = response.summary || \"(Без названия)\";\r",
+							"    const start = response.start?.dateTime || response.start?.date || \"(Без даты)\";\r",
+							"\r",
+							"    // Сохраняем ID события в переменную окружения\r",
+							"    pm.environment.set(\"calendar_event_id\", eventId);\r",
+							"\r",
+							"    console.log(`Событие создано: \"${summary}\" — ${start}; ID: ${eventId}`);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ya29.a0AZYkNZhCw4CaKvXH3MenASQXHeF4AdEQHlwQCfIveKLlWo9_42HefREL_clcTj1u59xhmYJAPf1bt6KvJoc5azZHJyUnxkxxULSmE1RL22zyx-XWKHK9O8s_eS8wBG0hAh8vmhPWCjXB69JI2NzLiPfxFWGjiHSBIOfOFt9PaCgYKASQSARMSFQHGX2Mi5rUcBXQZjt2MMQ5ue1Rvlw0175",
+							"type": "string"
+						},
+						{
+							"key": "expires_in",
+							"value": 3599,
+							"type": "number"
+						},
+						{
+							"key": "refresh_token",
+							"value": "1//05oRZMaxSvLVWCgYIARAAGAUSNwF-L9IrlnPa7g3kArEiGuPAvTPPcYPdxuDkqRXlzwiDcUXqpURHfKFt9gNZtjkgdz5XoY6g__4",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "createdAt",
+							"value": "2025-04-10T15:33:20.400Z",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://accounts.google.com/o/oauth2/v2/auth",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "107950560023-euco7i943qfppcgsvetdii4kppavp4hn.apps.googleusercontent.com",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.addons.current.action.compose https://www.googleapis.com/auth/gmail.addons.current.message.action https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.events.owned",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://oauth2.googleapis.com/token",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "Google Calendar API",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"summary\": \"Тестовое событие\",\r\n  \"description\": \"Это событие создано через Postman!\",\r\n  \"start\": {\r\n    \"dateTime\": \"2025-04-10T10:00:00+03:00\",\r\n    \"timeZone\": \"Europe/Moscow\"\r\n  },\r\n  \"end\": {\r\n    \"dateTime\": \"2025-04-10T11:00:00+03:00\",\r\n    \"timeZone\": \"Europe/Moscow\"\r\n  },\r\n  \"reminders\": {\r\n    \"useDefault\": false,\r\n    \"overrides\": [\r\n      { \"method\": \"popup\", \"minutes\": 10 }\r\n    ]\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"calendar",
+						"v3",
+						"calendars",
+						"{{calendar_id}}",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Список событий\", function () {\r",
+							"    let response = pm.response.json();\r",
+							"    let events = response.items;\r",
+							"\r",
+							"    if (!events || events.length === 0) {\r",
+							"        console.log(\"Нет событий в календаре.\");\r",
+							"    } else {\r",
+							"        let list = events.map((event, index) => {\r",
+							"            let summary = event.summary || \"(Без названия)\";\r",
+							"            let start = event.start?.dateTime || event.start?.date || \"(Нет времени)\";\r",
+							"            return `${index + 1}. ${summary} — ${start}`;\r",
+							"        }).join(\"\\n\");\r",
+							"\r",
+							"        console.log(\"Список событий:\\n\" + list);\r",
+							"    }\r",
+							"\r",
+							"    pm.expect(events.length, \"Событий не найдено\").to.be.above(0);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ya29.a0AZYkNZhKndyIswqMxxmYvefFjq6e7nT_9i0E4BFFa-otslNnYSDheOF5SId9GDlS6Cr9VjLzDXWJivRqLu5bUpC91KUyGjJJH-xHS-RV6BmdHTaVf2chLJykisegu6QZJSeC-eG642Iof9gsmqu8e6tECH-iC_qs1YqrlxlNaCgYKAWoSARMSFQHGX2MinUHuy4nfnQQiHCx20KqmRQ0175",
+							"type": "string"
+						},
+						{
+							"key": "expires_in",
+							"value": 3599,
+							"type": "number"
+						},
+						{
+							"key": "refresh_token",
+							"value": "1//05t_WmxdpGemeCgYIARAAGAUSNwF-L9IrN4q7YFn2URcmDeXCnaQ5xDnzFIyftvC8D44Rq4aM5uJkSpNU4cb8w-y5Wm8GPvNPWbE",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "createdAt",
+							"value": "2025-04-10T15:34:15.908Z",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://accounts.google.com/o/oauth2/v2/auth",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "107950560023-euco7i943qfppcgsvetdii4kppavp4hn.apps.googleusercontent.com",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.addons.current.action.compose https://www.googleapis.com/auth/gmail.addons.current.message.action https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.events.owned",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://oauth2.googleapis.com/token",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "Google Calendar API",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"calendar",
+						"v3",
+						"calendars",
+						"{{calendar_id}}",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events/{{calendar_event_id}}",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Событие успешно обновлено\", function () {\r",
+							"    pm.expect(pm.response.code).to.eql(200);\r",
+							"\r",
+							"    const updatedEvent = pm.response.json();\r",
+							"    const updatedSummary = updatedEvent.summary || \"(без названия)\";\r",
+							"    const eventId = updatedEvent.id;\r",
+							"\r",
+							"    const previousSummary = pm.environment.get(\"previous_event_summary\") || \"(неизвестно)\";\r",
+							"\r",
+							"    console.log(`Событие с id: ${eventId} было изменено на \"${updatedSummary}.\"`);\r",
+							"    \r",
+							"    pm.expect(updatedSummary).to.not.eql(previousSummary, \"Событие не изменилось.\");\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ya29.a0AZYkNZjoc6ELB-NQH5Tqy723AquaqZ4cvppOS9kp3R3gzSw3I4Y8yNpBh8kSrFb8uaj_OByTr6njCzQ3JY8hWScnKxcsYZLKPKVaaqQayyuGGrRPikKjSeqyLNpeM3oRl3WIFQ5jPZocRlBzNXSVKLbxU3dKTd3Q6K7GAVO6aCgYKARMSARMSFQHGX2MiUKMFi8q8AfXQ88UjxphLRg0175",
+							"type": "string"
+						},
+						{
+							"key": "expires_in",
+							"value": 3599,
+							"type": "number"
+						},
+						{
+							"key": "refresh_token",
+							"value": "1//053XCfGU-voFNCgYIARAAGAUSNwF-L9IrGq2sBl2RSMgjNq0zSpbmcGSgZiOTrYZhNaLNdDB1vx3Nf6zduJU52pWXsCn-L8utB6Y",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "createdAt",
+							"value": "2025-04-10T15:34:36.154Z",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://accounts.google.com/o/oauth2/v2/auth",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "107950560023-euco7i943qfppcgsvetdii4kppavp4hn.apps.googleusercontent.com",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.addons.current.action.compose https://www.googleapis.com/auth/gmail.addons.current.message.action https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.events.owned",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://oauth2.googleapis.com/token",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "Google Calendar API",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"summary\": \"Обновлённое событие\",\r\n  \"description\": \"Это обновлённое описание события через PATCH-запрос.\",\r\n  \"start\": {\r\n    \"dateTime\": \"2025-04-10T10:00:00+03:00\",\r\n    \"timeZone\": \"Europe/Moscow\"\r\n  },\r\n  \"end\": {\r\n    \"dateTime\": \"2025-04-10T11:00:00+03:00\",\r\n    \"timeZone\": \"Europe/Moscow\"\r\n  },\r\n  \"reminders\": {\r\n    \"useDefault\": false,\r\n    \"overrides\": [\r\n      {\r\n        \"method\": \"popup\",\r\n        \"minutes\": 5\r\n      }\r\n    ]\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events/{{calendar_event_id}}",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"calendar",
+						"v3",
+						"calendars",
+						"{{calendar_id}}",
+						"events",
+						"{{calendar_event_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events Copy 2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Список событий\", function () {\r",
+							"    let response = pm.response.json();\r",
+							"    let events = response.items;\r",
+							"\r",
+							"    if (!events || events.length === 0) {\r",
+							"        console.log(\"Нет событий в календаре.\");\r",
+							"    } else {\r",
+							"        let list = events.map((event, index) => {\r",
+							"            let summary = event.summary || \"(Без названия)\";\r",
+							"            let start = event.start?.dateTime || event.start?.date || \"(Нет времени)\";\r",
+							"            return `${index + 1}. ${summary} — ${start}`;\r",
+							"        }).join(\"\\n\");\r",
+							"\r",
+							"        console.log(\"Список событий:\\n\" + list);\r",
+							"    }\r",
+							"\r",
+							"    pm.expect(events.length, \"Событий не найдено\").to.be.above(0);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"packages": {},
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ya29.a0AZYkNZh89Ati8xuB-GV_50H1EqfJAOQ9lELKJkZUVuk_gXS9_PswJTB8a4HjPyiwR2gwhUWmAc4ACqhYThWemEIrmuYxC2Y0oz89J8QMeg7JFSQu-0txefFr2aLiWyo7lZuOqVMoAM4k4DY9HRLird28XiI1CoZc3dQc4nzWaCgYKAQ4SARMSFQHGX2MiqRvvgEa1irPeegRBpmhXvg0175",
+							"type": "string"
+						},
+						{
+							"key": "expires_in",
+							"value": 3599,
+							"type": "number"
+						},
+						{
+							"key": "refresh_token",
+							"value": "1//05xHbpiPhVH8GCgYIARAAGAUSNwF-L9IrHCBVvuwfvlejtPCcN1EgRHOgRcPyEwMo5Xmg2oFtonzUADYUp89KKwK7SG5mHXnoxak",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "createdAt",
+							"value": "2025-04-10T15:34:58.327Z",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://accounts.google.com/o/oauth2/v2/auth",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "107950560023-euco7i943qfppcgsvetdii4kppavp4hn.apps.googleusercontent.com",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.addons.current.action.compose https://www.googleapis.com/auth/gmail.addons.current.message.action https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.events.owned",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://oauth2.googleapis.com/token",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "Google Calendar API",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"calendar",
+						"v3",
+						"calendars",
+						"{{calendar_id}}",
+						"events"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://www.googleapis.com/calendar/v3/calendars/alexanderstoiko@gmail.com/events/45pgsllhruobghnks3gplj31b4",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Событие удалено\", function () {\r",
+							"    if (pm.response.code === 204) {\r",
+							"        // Если код ответа 204 (успешно удалено)\r",
+							"        console.log(\"Событие с id:\", pm.environment.get(\"calendar_event_id\"), \"удалено.\");\r",
+							"    } else if (pm.response.code === 404 || pm.response.code === 410) {\r",
+							"        console.log(\"Событие с id:\", pm.environment.get(\"calendar_event_id\"), \"не найдено для удаления.\");\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ya29.a0AZYkNZh3mlBW7uhygyUu9qMB4aNbnQa5Ov5n8eiNfnDm8WMO2gJIbgM9Y91V7YYOgZ_kdUoC1X02-HSOEWfi4h8Hm1bQfOn5X7dICZazHzcGQQjXYaoETrNh8Atfj1nVqL8HJ6lWRKBIkoJZ71l3MRRXru2jbvJV3bB9YQzwaCgYKAQUSARMSFQHGX2MimZz2905aQxg0rl8myHQkWQ0175",
+							"type": "string"
+						},
+						{
+							"key": "expires_in",
+							"value": 3599,
+							"type": "number"
+						},
+						{
+							"key": "refresh_token",
+							"value": "1//05zOlAfmYFPJ9CgYIARAAGAUSNwF-L9IrE1tfFVOEcIPkJQv3mHPnAG9E1_rpJPXoiMBvtMVNMGi8tv9YBAl7OoYChEVOCAQRWxE",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "createdAt",
+							"value": "2025-04-10T15:35:25.151Z",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://accounts.google.com/o/oauth2/v2/auth",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "107950560023-euco7i943qfppcgsvetdii4kppavp4hn.apps.googleusercontent.com",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.addons.current.action.compose https://www.googleapis.com/auth/gmail.addons.current.message.action https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.events.owned",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://oauth2.googleapis.com/token",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "Google Calendar API",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events/{{calendar_event_id}}",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"calendar",
+						"v3",
+						"calendars",
+						"{{calendar_id}}",
+						"events",
+						"{{calendar_event_id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events Copy 3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Список событий\", function () {\r",
+							"    let response = pm.response.json();\r",
+							"    let events = response.items;\r",
+							"\r",
+							"    if (!events || events.length === 0) {\r",
+							"        console.log(\"Нет событий в календаре.\");\r",
+							"    } else {\r",
+							"        let list = events.map((event, index) => {\r",
+							"            let summary = event.summary || \"(Без названия)\";\r",
+							"            let start = event.start?.dateTime || event.start?.date || \"(Нет времени)\";\r",
+							"            return `${index + 1}. ${summary} — ${start}`;\r",
+							"        }).join(\"\\n\");\r",
+							"\r",
+							"        console.log(\"Список событий:\\n\" + list);\r",
+							"    }\r",
+							"\r",
+							"    pm.expect(events.length, \"Событий не найдено\").to.be.above(0);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "oauth2",
+					"oauth2": [
+						{
+							"key": "accessToken",
+							"value": "ya29.a0AZYkNZgyVkbtc9WmwxkpCIKc-1nvbT096BpLHDz8FHIsaXytGm5jHn3oeXdGbcYkA6k3HngF0YA3GdB3ZzG8AbhBpcylw1ITMhbj-c3rBXnpMI6mDmWmKdyoK7H_D1wH3OVIu1AZ1iAjKQ5j2jhDAlrdoG_xXcSphzDDZg61aCgYKAWgSARMSFQHGX2MiOdtHRmbrWwNQteZaJV9x7A0175",
+							"type": "string"
+						},
+						{
+							"key": "expires_in",
+							"value": 3599,
+							"type": "number"
+						},
+						{
+							"key": "refresh_token",
+							"value": "1//051Ui0pRsafuuCgYIARAAGAUSNwF-L9Ir_6ZdFX_8OgfJijEZMdO8xmDozW566T32xBzFs1HoaB6_v4QnuI_PjLxZv0LgOCx2RW8",
+							"type": "string"
+						},
+						{
+							"key": "tokenType",
+							"value": "Bearer",
+							"type": "string"
+						},
+						{
+							"key": "createdAt",
+							"value": "2025-04-10T15:35:41.633Z",
+							"type": "string"
+						},
+						{
+							"key": "client_authentication",
+							"value": "header",
+							"type": "string"
+						},
+						{
+							"key": "grant_type",
+							"value": "authorization_code",
+							"type": "string"
+						},
+						{
+							"key": "authUrl",
+							"value": "https://accounts.google.com/o/oauth2/v2/auth",
+							"type": "string"
+						},
+						{
+							"key": "clientId",
+							"value": "107950560023-euco7i943qfppcgsvetdii4kppavp4hn.apps.googleusercontent.com",
+							"type": "string"
+						},
+						{
+							"key": "scope",
+							"value": "https://www.googleapis.com/auth/userinfo.email https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/gmail.addons.current.action.compose https://www.googleapis.com/auth/gmail.addons.current.message.action https://www.googleapis.com/auth/gmail.labels https://www.googleapis.com/auth/calendar https://www.googleapis.com/auth/calendar.events https://www.googleapis.com/auth/calendar.events.owned",
+							"type": "string"
+						},
+						{
+							"key": "accessTokenUrl",
+							"value": "https://oauth2.googleapis.com/token",
+							"type": "string"
+						},
+						{
+							"key": "tokenName",
+							"value": "Google Calendar API",
+							"type": "string"
+						},
+						{
+							"key": "useBrowser",
+							"value": true,
+							"type": "boolean"
+						},
+						{
+							"key": "addTokenTo",
+							"value": "header",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://www.googleapis.com/calendar/v3/calendars/{{calendar_id}}/events",
+					"protocol": "https",
+					"host": [
+						"www",
+						"googleapis",
+						"com"
+					],
+					"path": [
+						"calendar",
+						"v3",
+						"calendars",
+						"{{calendar_id}}",
+						"events"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "calendar_id",
+			"value": ""
+		}
+	]
+}
